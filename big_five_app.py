@@ -60,7 +60,7 @@ questions = [
 ]
 
 # Shuffle or present fixed order
-st.title("Big Five Personality Assessment")
+st.title("StaffNet Solutions Personality Assessment")
 st.markdown("Please respond to each statement on a scale of **1 (Strongly Disagree)** to **5 (Strongly Agree)**.")
 
 responses = []
