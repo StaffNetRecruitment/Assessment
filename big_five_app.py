@@ -59,7 +59,7 @@ questions = [
 st.title("StaffNet Solutions Personality Assessment")
 st.markdown("Please respond to each statement on a scale of **1 (Strongly Disagree)** to **5 (Strongly Agree)**.")
 
-traits_scores = {"Openness": [], "Conscientiousness": [], "Extraversion": [], "Agreeableness": [], "Neuroticism": []}
+traits_scores = {trait: [] for _, trait, _ in questions}
 
 with st.form("big_five_form"):
     name = st.text_input("Your Full Name")
@@ -101,12 +101,13 @@ Suitability:
     msg = EmailMessage()
     msg.set_content(email_body)
     msg['Subject'] = f"Assessment Result: {name}"
-    msg['From'] = "your_email@example.com"  # Replace with sender's email
+    msg['From'] = "your_email@yourdomain.com"  # Replace with actual sender address
     msg['To'] = "recruitment@staffnetsolutions.com"
 
     try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login("your_email@example.com", "your_app_password")
+        with smtplib.SMTP("smtp.yourhost.com", 587) as smtp:  # Replace with your SMTP server
+            smtp.starttls()
+            smtp.login("your_email@yourdomain.com", "your_password")  # Use real credentials
             smtp.send_message(msg)
         st.success("Thank you for completing the assessment! Your responses have been submitted.")
     except Exception as e:
