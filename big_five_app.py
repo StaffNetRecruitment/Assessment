@@ -105,7 +105,7 @@ Suitability:
     msg['To'] = "recruitment@staffnetsolutions.com"
 
     try:
-        with smtplib.SMTP("smtp.yourhost.com", 587) as smtp:  # Replace with your SMTP server
+        with smtplib.SMTP("smtp.webmail.staffnetsolutions.com", 587) as smtp:  # Replace with your SMTP server
             smtp.starttls()
             smtp.login("your_email@yourdomain.com", "your_password")  # Use real credentials
             smtp.send_message(msg)
