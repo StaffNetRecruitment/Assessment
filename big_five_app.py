@@ -1,8 +1,18 @@
 import streamlit as st
 import smtplib
 from email.message import EmailMessage
+import os
+from dotenv import load_dotenv
 
-# Define the questions
+# Load environment variables from a .env file
+load_dotenv()
+
+SMTP_SERVER = os.getenv("SMTP_SERVER")
+SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+SMTP_USER = os.getenv("SMTP_USER")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+EMAIL_TO = "recruitment@staffnetsolutions.com"
+
 questions = [
     ("I have a vivid imagination.", "Openness", False),
     ("I am not interested in abstract ideas.", "Openness", True),
@@ -73,20 +83,22 @@ with st.form("big_five_form"):
     submitted = st.form_submit_button("Submit")
 
 if submitted:
-    results = ""
-    for trait, scores in traits_scores.items():
-        average = sum(scores) / len(scores)
-        results += f"{trait}: {average:.2f}\\n"
-
-    cons_score = sum(traits_scores["Conscientiousness"]) / 10
-    neuro_score = sum(traits_scores["Neuroticism"]) / 10
-    if cons_score >= 4 and neuro_score <= 2.5:
-        suitability = "Strong potential for a remote administrative assistant role."
+    if not name or not email:
+        st.error("Please enter both your name and email address.")
     else:
-        suitability = "Scores suggest areas for growth for this position."
+        results = ""
+        for trait, scores in traits_scores.items():
+            average = sum(scores) / len(scores)
+            results += f"{trait}: {average:.2f}\n"
 
-    email_body = f"""
-Big Five Personality Assessment - StaffNet Solutions
+        cons_score = sum(traits_scores["Conscientiousness"]) / 10
+        neuro_score = sum(traits_scores["Neuroticism"]) / 10
+        if cons_score >= 4 and neuro_score <= 2.5:
+            suitability = "Strong potential for a remote administrative assistant role."
+        else:
+            suitability = "Scores suggest areas for growth for this position."
+
+        email_body = f"""Big Five Personality Assessment - StaffNet Solutions
 
 Name: {name}
 Email: {email}
@@ -98,17 +110,18 @@ Suitability:
 {suitability}
 """
 
-    msg = EmailMessage()
-    msg.set_content(email_body)
-    msg['Subject'] = f"Assessment Result: {name}"
-    msg['From'] = "your_email@yourdomain.com"  # Replace with actual sender address
-    msg['To'] = "recruitment@staffnetsolutions.com"
+        msg = EmailMessage()
+        msg.set_content(email_body)
+        msg['Subject'] = f"Assessment Result: {name}"
+        msg['From'] = SMTP_USER
+        msg['To'] = EMAIL_TO
 
-    try:
-        with smtplib.SMTP("smtp.webmail.staffnetsolutions.com", 587) as smtp:  # Replace with your SMTP server
-            smtp.starttls()
-            smtp.login("recruitment@staffnetsolutions.com", "Boylston179!")  # Use real credentials
-            smtp.send_message(msg)
-        st.success("Thank you for completing the assessment! Your responses have been submitted.")
-    except Exception as e:
-        st.error(f"Failed to send email: {e}")
+        try:
+            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:
+                smtp.starttls()
+                smtp.login(SMTP_USER, SMTP_PASSWORD)
+                smtp.send_message(msg)
+            st.success("Thank you for completing the assessment! Your responses have been submitted.")
+        except Exception as e:
+            st.error(f"Failed to send email: {e}")
+            
