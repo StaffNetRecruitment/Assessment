@@ -107,7 +107,7 @@ Suitability:
     try:
         with smtplib.SMTP("smtp.webmail.staffnetsolutions.com", 587) as smtp:  # Replace with your SMTP server
             smtp.starttls()
-            smtp.login("your_email@yourdomain.com", "your_password")  # Use real credentials
+            smtp.login("recruitment@staffnetsolutions.com", "Boylston179!")  # Use real credentials
             smtp.send_message(msg)
         st.success("Thank you for completing the assessment! Your responses have been submitted.")
     except Exception as e:
